@@ -6,9 +6,15 @@ type Props = {
   title: string;
   children?: ReactNode;
   description?: string;
+  onConfirm: () => void;
 };
 
-export function AlertDialog({ title, description, children }: Props) {
+export function AlertDialog({
+  title,
+  description,
+  children,
+  onConfirm,
+}: Props) {
   return (
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
@@ -47,6 +53,7 @@ export function AlertDialog({ title, description, children }: Props) {
                   flex flex-1 items-center justify-center border border-green-400 py-1 rounded-sm
                   hover:bg-green-400 transition-colors
                 "
+              onClick={onConfirm}
             >
               Confirmar
             </AlertDialogPrimitive.Action>

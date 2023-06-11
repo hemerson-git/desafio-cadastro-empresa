@@ -34,6 +34,17 @@ type CustomerProps = {
 export function BusinessList() {
   const [selectedCustomer, setSelectedCustomer] =
     useState<CustomerProps | null>(null);
+  const [customers, setCustomers] = useState<CustomerProps[]>(business);
+
+  function onConfirm(id: string) {
+    const filteredBusiness = customers.filter((customer) => customer.id !== id);
+    setCustomers([...filteredBusiness]);
+  }
+
+  function handleSelectCustomer(customer: CustomerProps) {
+    console.log(customer);
+    setSelectedCustomer(customer);
+  }
 
   return (
     <table className="w-full rounded-t-md">
@@ -48,7 +59,7 @@ export function BusinessList() {
 
       <AlertDialogPrimitive.Root>
         <tbody>
-          {business.map((customer) => (
+          {customers.map((customer) => (
             <tr key={customer.id}>
               <td className="px-4 py-2">{customer.name}</td>
               <td className="px-4 py-2">{customer.cnpj}</td>
@@ -61,7 +72,7 @@ export function BusinessList() {
 
                 <AlertDialogPrimitive.Trigger
                   className="flex items-center justify-center gap-2 hover:underline underline-offset-2"
-                  onClick={() => setSelectedCustomer(customer)}
+                  onClick={() => handleSelectCustomer(customer)}
                 >
                   <Trash />
                   Excluir
@@ -75,6 +86,7 @@ export function BusinessList() {
           <AlertDialog
             title="Apagar Empresa"
             description={`Você tem certeza que deseja apagar a empresa ${selectedCustomer.name}`}
+            onConfirm={() => onConfirm(selectedCustomer.id)}
           />
         )}
       </AlertDialogPrimitive.Root>
