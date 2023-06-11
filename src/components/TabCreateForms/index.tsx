@@ -4,7 +4,7 @@ import { FormCreateBusiness } from "../FormCreateBusiness";
 
 export function TabCreateForms() {
   return (
-    <Tabs.Root className="w-full">
+    <Tabs.Root className="w-full" defaultValue="tab1">
       <Tabs.List className="flex w-full gap-2 bg-purple-400 pt-1 rounded-t-md">
         <Tabs.Trigger
           value="tab1"

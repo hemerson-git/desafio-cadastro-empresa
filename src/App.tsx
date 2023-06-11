@@ -1,4 +1,5 @@
-import { Router } from "./components/routes";
+import { Header } from "./components/Header";
+import { Router } from "./assets/routes";
 
 function App() {
   return (
