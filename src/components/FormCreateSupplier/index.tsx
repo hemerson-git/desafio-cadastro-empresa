@@ -1,19 +1,53 @@
-import { ChangeEvent, useState } from "react";
+import { useState, FormEvent } from "react";
 import { Input } from "../Input";
+import { CepAPI } from "../../services/CEPApi";
+import { convertMillisecondsToYears } from "../../utils/convertMillisecondsToYears";
+
+type AddressProps = {
+  cep: string;
+  uf: string;
+  cidade: string;
+  bairro: string;
+  logradouro: string;
+};
 
 export function FormCreateSupplier() {
   const [hasCNPJ, setHasCNPJ] = useState(false);
+  const [cep, setCep] = useState("");
+  const [address, setAddress] = useState<AddressProps | null>(null);
+  const [supplierBirth, setSupplierBirth] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
 
-  function ValidateCEP(cep: string) {
-    console.log(cep);
+  async function ValidateCEP(cep: string) {
+    const parsedCep = Number(cep.replace("-", ""));
+
+    if (!isNaN(parsedCep) && parsedCep >= 8) {
+      const result = await CepAPI.get(`/${parsedCep}`);
+      console.log(result.data);
+      setAddress(result.data);
+    }
   }
 
   function changeType(e: string) {
     e === "pf" ? setHasCNPJ(false) : setHasCNPJ(true);
   }
 
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const supplierAge = convertMillisecondsToYears(
+      Number(new Date()) - Number(new Date(supplierBirth))
+    );
+
+    if (address?.uf === "PR" && supplierAge < 18) {
+      alert("O fornecedor deve ser maior de idade");
+      return;
+    }
+  }
+
   return (
-    <form action="" className="flex flex-col gap-y-4 p-4">
+    <form className="flex flex-col gap-y-4 p-4" onSubmit={handleSubmit}>
       <div className="flex justify-between">
         <div className="flex flex-1 items-center justify-center gap-2">
           <input
@@ -64,7 +98,14 @@ export function FormCreateSupplier() {
             type="text"
             mask="999.999.999-99"
           />
-          <Input label="Data de Nascimento" id="cpf" type="date" />
+
+          <Input
+            label="Data de Nascimento"
+            id="cpf"
+            type="date"
+            value={supplierBirth}
+            onChange={(e) => setSupplierBirth(e.target.value)}
+          />
         </>
       )}
 
@@ -75,8 +116,21 @@ export function FormCreateSupplier() {
         id="cep"
         type="text"
         mask="99999-999"
-        onChange={(e) => ValidateCEP(e.target.value)}
+        value={cep}
+        onChange={(e) => {
+          ValidateCEP(e.target.value);
+          setCep(e.target.value);
+        }}
       />
+
+      <button
+        type="submit"
+        className="
+          w-full py-2 px-4 flex items-center justify-center rounded-sm border mt-4
+          border-purple-500 hover:bg-purple-500 transition-colors"
+      >
+        Cadastrar
+      </button>
     </form>
   );
 }
