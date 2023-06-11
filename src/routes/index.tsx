@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { TabCreateForms } from "../../components/TabCreateForms";
-import { Home } from "../../pages";
+import { TabCreateForms } from "../components/TabCreateForms";
+import { Home } from "../pages";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
